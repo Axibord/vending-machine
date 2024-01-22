@@ -17,6 +17,12 @@ defmodule VendingMachineWeb.Router do
     plug :accepts, ["json"]
   end
 
+  scope "/api", VendingMachineWeb do
+    pipe_through :api
+
+    resources "/products", ProductController, except: [:new, :edit]
+  end
+
   scope "/", VendingMachineWeb do
     pipe_through :browser
 
