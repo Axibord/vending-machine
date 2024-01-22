@@ -6,7 +6,7 @@ defmodule VendingMachine.Accounts.User do
   schema "users" do
     field :username, :string
     field :role, Ecto.Enum, values: [:seller, :buyer]
-    field :deposit, :integer
+    field :deposit, :integer, default: 0
     field :email, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
@@ -41,9 +41,11 @@ defmodule VendingMachine.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password])
+    |> cast(attrs, [:email, :password, :deposit, :username, :role])
     |> validate_email(opts)
     |> validate_password(opts)
+    |> validate_required([:deposit, :username, :role])
+    |> validate_inclusion(:role, [:seller, :buyer])
   end
 
   defp validate_email(changeset, opts) do

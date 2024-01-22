@@ -35,7 +35,7 @@ defmodule VendingMachine.Products do
       ** (Ecto.NoResultsError)
 
   """
-  def get_product!(id), do: Repo.get!(Product, id)
+  def get_product!(id), do: Repo.get!(Product, id) |> Repo.preload(:user)
 
   @doc """
   Creates a product.
