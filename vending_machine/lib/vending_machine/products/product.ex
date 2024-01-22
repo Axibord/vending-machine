@@ -15,7 +15,7 @@ defmodule VendingMachine.Products.Product do
   @doc false
   def changeset(product, attrs) do
     product
-    |> cast(attrs, [:product_name, :amount_available, :cost])
-    |> validate_required([:product_name, :amount_available, :cost])
+    |> cast(attrs, [:product_name, :amount_available, :cost, :seller_id])
+    |> validate_required([:product_name, :amount_available, :cost, :seller_id])
   end
 end
