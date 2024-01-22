@@ -160,4 +160,10 @@ defmodule VendingMachine.Accounts.User do
       add_error(changeset, :current_password, "is not valid")
     end
   end
+
+  def update_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:username, :deposit, :email])
+    |> validate_required([:username, :deposit, :email])
+  end
 end

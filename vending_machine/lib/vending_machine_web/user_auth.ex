@@ -4,6 +4,7 @@ defmodule VendingMachineWeb.UserAuth do
   import Plug.Conn
   import Phoenix.Controller
 
+  alias VendingMachine.Accounts.UserToken
   alias VendingMachine.Accounts
 
   # Make the remember me cookie valid for 60 days.
@@ -208,6 +209,13 @@ defmodule VendingMachineWeb.UserAuth do
       |> maybe_store_return_to()
       |> redirect(to: ~p"/users/log_in")
       |> halt()
+    end
+  end
+
+  def check_token_validity(token) do
+    case Accounts.get_user_by_session_token(token) do
+      nil -> {:error, "Invalid/Expired token"}
+      user -> {:ok, user}
     end
   end
 
