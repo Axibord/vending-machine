@@ -3,10 +3,13 @@ defmodule VendingMachine.Accounts.User do
   import Ecto.Changeset
 
   schema "users" do
-    field(:email, :string)
-    field(:password, :string, virtual: true, redact: true)
-    field(:hashed_password, :string, redact: true)
-    field(:confirmed_at, :naive_datetime)
+    field :username, :string
+    field :role, Ecto.Enum, values: [:seller, :buyer]
+    field :deposit, :integer
+    field :email, :string
+    field :password, :string, virtual: true, redact: true
+    field :hashed_password, :string, redact: true
+    field :confirmed_at, :naive_datetime
 
     timestamps(type: :utc_datetime)
   end
