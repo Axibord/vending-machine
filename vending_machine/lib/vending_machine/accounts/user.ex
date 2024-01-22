@@ -1,6 +1,7 @@
 defmodule VendingMachine.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
+  alias VendingMachine.Products.Product
 
   schema "users" do
     field :username, :string
@@ -10,6 +11,7 @@ defmodule VendingMachine.Accounts.User do
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
+    has_many :products, Product, foreign_key: :seller_id
 
     timestamps(type: :utc_datetime)
   end
