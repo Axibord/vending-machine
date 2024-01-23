@@ -6,14 +6,14 @@ defmodule VendingMachineWeb.ProductJSON do
   Renders a list of products.
   """
   def index(%{products: products}) do
-    %{posts: for(product <- products, do: data(product))}
+    %{products: for(product <- products, do: data(product))}
   end
 
   @doc """
   Renders a single product.
   """
   def show(%{product: product}) do
-    %{data: data(product)}
+    %{product: data(product)}
   end
 
   defp data(%Product{} = product) do

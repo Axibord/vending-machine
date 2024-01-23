@@ -4,7 +4,6 @@ defmodule VendingMachineWeb.UserAuth do
   import Plug.Conn
   import Phoenix.Controller
 
-  alias VendingMachine.Accounts.UserToken
   alias VendingMachine.Accounts
 
   # Make the remember me cookie valid for 60 days.
@@ -43,6 +42,19 @@ defmodule VendingMachineWeb.UserAuth do
 
   defp maybe_write_remember_me_cookie(conn, _token, _params) do
     conn
+  end
+
+  def generate_token_and_put_in_session(conn, user) do
+    token = Accounts.generate_user_session_token(user)
+
+    conn
+    |> put_resp_cookie(@remember_me_cookie, token, @remember_me_options)
+    |> fetch_cookies(signed: [@remember_me_cookie])
+  end
+
+  def remove_token_from_cookies(conn) do
+    conn
+    |> delete_resp_cookie(@remember_me_cookie, @remember_me_options)
   end
 
   # This function renews the session ID and erases the whole
@@ -93,6 +105,26 @@ defmodule VendingMachineWeb.UserAuth do
     {user_token, conn} = ensure_user_token(conn)
     user = user_token && Accounts.get_user_by_session_token(user_token)
     assign(conn, :current_user, user)
+  end
+
+  def check_token_validity(conn, _opts) do
+    signed_token = fetch_cookies(conn, signed: [@remember_me_cookie])
+
+    if Map.has_key?(signed_token.cookies, @remember_me_cookie) == false do
+      remove_token_from_cookies(conn) |> send_resp(401, "Unauthorized") |> halt()
+    end
+
+    token = signed_token.cookies[@remember_me_cookie]
+
+    case Accounts.get_user_by_session_token(token) do
+      nil ->
+        remove_token_from_cookies(conn)
+        |> send_resp(401, "Unauthorized")
+        |> halt()
+
+      _ ->
+        conn
+    end
   end
 
   defp ensure_user_token(conn) do

@@ -12,11 +12,15 @@ defmodule VendingMachineWeb.UserJSON do
   Renders a single user.
   """
   def show(%{user: user}) do
-    %{data: data(user)}
+    %{user: data(user)}
   end
 
   def unauthorized(_msg) do
     %{errors: %{detail: "Unauthorized"}}
+  end
+
+  def login_error(%{reason: reason}) do
+    %{errors: %{detail: reason}}
   end
 
   defp data(%User{} = user) do
