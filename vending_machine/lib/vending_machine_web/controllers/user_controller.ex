@@ -12,9 +12,23 @@ defmodule VendingMachineWeb.UserController do
     render(conn, :index, users: users)
   end
 
-  def login(_conn, %{"user" => user_params}) do
-    user = Accounts.get_user_by_email(user_params["email"])
-    UserAuth.log_in_user(user, user_params)
+  # TODO: after login, fetch user session, if it is expired, renew it in place (DB and resp cookie level)
+  def login(conn, %{"user" => %{"email" => email, "password" => password}}) do
+    user = Accounts.login_user(%{email: email, password: password})
+
+    case user do
+      {:ok, user} ->
+        conn
+        |> put_status(200)
+        |> UserAuth.generate_token_and_put_in_session(user)
+        |> render(:show, user: user)
+
+      {:error, reason} ->
+        conn
+        |> UserAuth.remove_token_from_cookies()
+        |> put_status(401)
+        |> render(:login_error, reason: reason)
+    end
   end
 
   def create(conn, %{"user" => user_params}) do
@@ -22,6 +36,7 @@ defmodule VendingMachineWeb.UserController do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/users/#{user}")
+      |> UserAuth.generate_token_and_put_in_session(user)
       |> render(:show, user: user)
     end
   end

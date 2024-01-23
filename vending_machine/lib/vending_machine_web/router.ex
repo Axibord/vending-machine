@@ -17,23 +17,15 @@ defmodule VendingMachineWeb.Router do
     plug :accepts, ["json"]
   end
 
-  pipeline :require_authenticated_user_api do
-    plug VendingMachineWeb.Plugs.RequireAuthenticatedUserApi
-  end
-
-  # authenticated api routes
-  scope "/api" do
-    pipe_through [:api, :require_authenticated_user_api]
-
-    resources "/users", UserController, except: [:new, :edit, :create]
-  end
-
   scope "/api", VendingMachineWeb do
     pipe_through :api
 
     resources "/products", ProductController, except: [:new, :edit]
-    post "/users", UserController, :create
+    post "/users/register", UserController, :create
     post "/users/login", UserController, :login
+
+    pipe_through [:check_token_validity]
+    get "/users", UserController, :index
   end
 
   scope "/", VendingMachineWeb do
