@@ -1,8 +1,8 @@
-defmodule VendingMachineWeb.Middlewares.ProductMiddleware do
+defmodule VendingMachineWeb.Middlewares.ProductMiddlewares do
   alias VendingMachine.Products
   alias VendingMachineWeb.Controllers.Helpers
 
-  def restrict_to_owner(conn, _opts) do
+  def restrict_to_product_owner(conn, _opts) do
     product_id = conn.params["id"] |> String.to_integer()
     user_id = conn.assigns[:current_user].id
 
