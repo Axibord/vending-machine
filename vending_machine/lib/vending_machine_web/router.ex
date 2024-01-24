@@ -2,7 +2,8 @@ defmodule VendingMachineWeb.Router do
   use VendingMachineWeb, :router
 
   import VendingMachineWeb.UserAuth
-  import VendingMachineWeb.Middlewares.ProductMiddleware, only: [restrict_to_owner: 2]
+  import VendingMachineWeb.Middlewares.ProductMiddlewares, only: [restrict_to_product_owner: 2]
+  import VendingMachineWeb.Middlewares.UserMiddlewares, only: [restrict_to_self: 2]
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -27,13 +28,20 @@ defmodule VendingMachineWeb.Router do
     post "/users/login", UserController, :login
 
     pipe_through [:check_token_validity]
-    get "/users", UserController, :index
-    post "/products", ProductController, :create
 
-    pipe_through [:restrict_to_owner]
+    post "/products", ProductController, :create
+  end
+
+  scope "/api", VendingMachineWeb do
+    pipe_through [:api, :check_token_validity, :restrict_to_product_owner]
     patch "/products/:id", ProductController, :update
     put "/products/:id", ProductController, :update
     delete "/products/:id", ProductController, :delete
+  end
+
+  scope "api", VendingMachineWeb do
+    pipe_through [:api, :check_token_validity, :restrict_to_self]
+    get "/users/:id", UserController, :show
   end
 
   scope "/", VendingMachineWeb do
