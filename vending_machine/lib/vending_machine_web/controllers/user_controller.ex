@@ -47,21 +47,36 @@ defmodule VendingMachineWeb.UserController do
     {:error, changeset}
   end
 
-  def show(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
+  def show(conn, %{"id" => _id}) do
+    user = conn.assigns[:current_user]
     render(conn, :show, user: user)
   end
 
-  def update(conn, %{"id" => id, "user" => user_params}) do
-    user = Accounts.get_user!(id)
+  def update(conn, %{"id" => _id, "user" => user_params}) do
+    user = conn.assigns[:current_user]
 
     with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
       render(conn, :show, user: user)
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
+  def deposit(conn, %{"id" => _id, "deposit" => deposit}) do
+    user = conn.assigns[:current_user]
+
+    deposit = if is_integer(deposit), do: deposit, else: String.to_integer(deposit)
+
+    with {:ok, %User{} = user} <- Accounts.deposit(user, deposit) do
+      render(conn, :show, user: user)
+    end
+  end
+
+  def deposit(_conn, _invalid_params) do
+    changeset = Accounts.User.deposit_changeset(%Accounts.User{}, %{})
+    {:error, changeset}
+  end
+
+  def delete(conn, %{"id" => _id}) do
+    user = conn.assigns[:current_user]
 
     with {:ok, %User{}} <- Accounts.delete_user(user) do
       send_resp(conn, :no_content, "")
