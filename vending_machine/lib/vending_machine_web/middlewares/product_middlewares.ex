@@ -13,7 +13,5 @@ defmodule VendingMachineWeb.Middlewares.ProductMiddlewares do
     else
       Helpers.return_unauthorized_json(conn, "You are not the owner of this product.")
     end
-
-    conn
   end
 end
