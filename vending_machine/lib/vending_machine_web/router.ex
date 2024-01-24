@@ -2,6 +2,7 @@ defmodule VendingMachineWeb.Router do
   use VendingMachineWeb, :router
 
   import VendingMachineWeb.UserAuth
+  import VendingMachineWeb.Middlewares.ProductMiddleware, only: [restrict_to_owner: 2]
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -20,12 +21,19 @@ defmodule VendingMachineWeb.Router do
   scope "/api", VendingMachineWeb do
     pipe_through :api
 
-    resources "/products", ProductController, except: [:new, :edit]
+    get "/products", ProductController, :index
+    get "/products/:id", ProductController, :show
     post "/users/register", UserController, :create
     post "/users/login", UserController, :login
 
     pipe_through [:check_token_validity]
     get "/users", UserController, :index
+    post "/products", ProductController, :create
+
+    pipe_through [:restrict_to_owner]
+    patch "/products/:id", ProductController, :update
+    put "/products/:id", ProductController, :update
+    delete "/products/:id", ProductController, :delete
   end
 
   scope "/", VendingMachineWeb do
@@ -33,11 +41,6 @@ defmodule VendingMachineWeb.Router do
 
     get "/", PageController, :home
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", VendingMachineWeb do
-  #   pipe_through :api
-  # end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:vending_machine, :dev_routes) do

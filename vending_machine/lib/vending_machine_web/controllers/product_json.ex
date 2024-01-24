@@ -17,14 +17,21 @@ defmodule VendingMachineWeb.ProductJSON do
   end
 
   defp data(%Product{} = product) do
-    %{
+    user_loaded? = Ecto.assoc_loaded?(product.user)
+
+    response = %{
       id: product.id,
+      product_name: product.product_name,
       amount_available: product.amount_available,
       cost: product.cost,
-      product_name: product.product_name,
-      seller_id: product.seller_id,
-      seller: user_to_json(product.user)
+      seller_id: product.seller_id
     }
+
+    if user_loaded? do
+      Map.put(response, :seller, user_to_json(product.user))
+    else
+      response
+    end
   end
 
   defp user_to_json(%User{} = user) do

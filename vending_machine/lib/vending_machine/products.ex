@@ -50,6 +50,7 @@ defmodule VendingMachine.Products do
 
   """
   def create_product(attrs \\ %{}) do
+    # create the product and preload the user when we return it in the response
     %Product{}
     |> Product.changeset(attrs)
     |> Repo.insert()
