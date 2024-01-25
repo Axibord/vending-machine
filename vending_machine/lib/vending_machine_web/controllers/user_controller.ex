@@ -79,6 +79,19 @@ defmodule VendingMachineWeb.UserController do
     {:error, changeset}
   end
 
+  def reset_deposit(conn, _params) do
+    user = conn.assigns[:current_user]
+
+    with {:ok, %User{} = user} <- Accounts.reset_deposit(user) do
+      render(conn, :show, user: user)
+    end
+  end
+
+  def reset_deposit(_conn, _invalid_params) do
+    changeset = Accounts.User.reset_deposit_changeset(%Accounts.User{}, %{})
+    {:error, changeset}
+  end
+
   def delete(conn, %{"id" => _id}) do
     user = conn.assigns[:current_user]
 

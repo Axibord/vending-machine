@@ -43,6 +43,7 @@ defmodule VendingMachineWeb.Router do
 
   scope "/api", VendingMachineWeb do
     pipe_through [:api, :check_token_validity, :restrict_to_buyer]
+    post "/users/reset_deposit", UserController, :reset_deposit
     post "/users/deposit", UserController, :deposit
     post "/products/buy", ProductController, :buy_products
   end
