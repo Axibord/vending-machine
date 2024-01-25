@@ -85,7 +85,8 @@ defmodule VendingMachine.Products do
               |> Repo.update()
             end)
 
-            {:ok, products}
+            {:ok,
+             %{products: products, total_cost: total_cost, change: user.deposit - total_cost}}
           else
             {:error,
              Ecto.Changeset.change(%BuyProduct{}, %{})
