@@ -21,4 +21,13 @@ defmodule VendingMachineWeb.FallbackController do
     |> put_view(html: VendingMachineWeb.ErrorHTML, json: VendingMachineWeb.ErrorJSON)
     |> render(:"404")
   end
+
+  def call(conn, opts) do
+    {:error, changeset} = opts
+
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(json: VendingMachineWeb.ChangesetJSON)
+    |> render(:error, changeset: hd(changeset))
+  end
 end

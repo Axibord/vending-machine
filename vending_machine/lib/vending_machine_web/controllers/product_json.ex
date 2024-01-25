@@ -16,6 +16,10 @@ defmodule VendingMachineWeb.ProductJSON do
     %{product: data(product)}
   end
 
+  def buy_products(%{details: details}) do
+    %{products: details}
+  end
+
   defp data(%Product{} = product) do
     user_loaded? = Ecto.assoc_loaded?(product.user)
 
