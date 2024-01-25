@@ -41,14 +41,18 @@ defmodule VendingMachineWeb.Router do
     delete "/products/:id", ProductController, :delete
   end
 
-  scope "api", VendingMachineWeb do
-    pipe_through [:api, :check_token_validity, :restrict_to_self, :restrict_to_buyer]
-    post "/users/:id/deposit", UserController, :deposit
+  scope "/api", VendingMachineWeb do
+    pipe_through [:api, :check_token_validity, :restrict_to_buyer]
+    post "/users/deposit", UserController, :deposit
+    post "/products/buy", ProductController, :buy_products
   end
 
-  scope "api", VendingMachineWeb do
+  scope "/api", VendingMachineWeb do
     pipe_through [:api, :check_token_validity, :restrict_to_self]
     get "/users/:id", UserController, :show
+    put "/users/:id", UserController, :update
+    patch "/users/:id", UserController, :update
+    delete "/users/:id", UserController, :delete
   end
 
   scope "/", VendingMachineWeb do

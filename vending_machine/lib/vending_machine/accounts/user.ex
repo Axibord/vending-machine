@@ -5,7 +5,7 @@ defmodule VendingMachine.Accounts.User do
 
   schema "users" do
     field :username, :string
-    field :role, Ecto.Enum, values: [:seller, :buyer]
+    field :role, :string
     field :deposit, :integer
     field :email, :string
     field :password, :string, virtual: true, redact: true
@@ -45,7 +45,7 @@ defmodule VendingMachine.Accounts.User do
     |> validate_email(opts)
     |> validate_password(opts)
     |> validate_required([:deposit, :username, :role])
-    |> validate_inclusion(:role, [:seller, :buyer])
+    |> validate_inclusion(:role, ["seller", "buyer"], message: "must be seller or buyer")
   end
 
   defp validate_email(changeset, opts) do
@@ -163,8 +163,9 @@ defmodule VendingMachine.Accounts.User do
 
   def update_changeset(user, attrs) do
     user
-    |> cast(attrs, [:username, :deposit, :email])
-    |> validate_required([:username, :deposit, :email])
+    |> cast(attrs, [:username, :deposit, :email, :role])
+    |> validate_required([:username, :deposit, :email, :role])
+    |> validate_inclusion(:role, ["seller", "buyer"], message: "must be seller or buyer")
   end
 
   def deposit_changeset(user, attrs) do
@@ -172,5 +173,11 @@ defmodule VendingMachine.Accounts.User do
     |> cast(attrs, [:deposit])
     |> validate_required([:deposit])
     |> validate_inclusion(:deposit, [5, 10, 20, 50, 100], message: "must be 5, 10, 20, 50 or 100")
+  end
+
+  def update_deposit_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:deposit])
+    |> validate_required([:deposit])
   end
 end

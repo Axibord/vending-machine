@@ -55,12 +55,16 @@ defmodule VendingMachineWeb.UserController do
   def update(conn, %{"id" => _id, "user" => user_params}) do
     user = conn.assigns[:current_user]
 
-    with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
-      render(conn, :show, user: user)
+    case Accounts.update_user(user, user_params) do
+      {:ok, %User{} = user} ->
+        render(conn, :show, user: user)
+
+      {:error, changeset} ->
+        {:error, changeset}
     end
   end
 
-  def deposit(conn, %{"id" => _id, "deposit" => deposit}) do
+  def deposit(conn, %{"deposit" => deposit}) do
     user = conn.assigns[:current_user]
 
     deposit = if is_integer(deposit), do: deposit, else: String.to_integer(deposit)

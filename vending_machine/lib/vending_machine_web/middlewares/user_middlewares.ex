@@ -15,7 +15,7 @@ defmodule VendingMachineWeb.Middlewares.UserMiddlewares do
   def restrict_to_buyer(conn, _opts) do
     current_user_role = conn.assigns[:current_user].role
 
-    if current_user_role == :buyer do
+    if current_user_role == "buyer" do
       conn
     else
       Helpers.return_unauthorized_json(conn, "You must be a buyer to deposit.")

@@ -26,10 +26,26 @@ defmodule VendingMachineWeb.ProductController do
     {:error, changeset}
   end
 
-  @spec show(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def show(conn, %{"id" => id}) do
     product = Products.get_product!(id)
     render(conn, :show, product: product)
+  end
+
+  # will receive a list a maps with product_id and amount to buy
+  def buy_products(conn, %{"products" => products}) do
+    user = conn.assigns[:current_user]
+
+    with {:ok, details} <- Products.buy_products(user, products) do
+      render(conn, :buy_products, details: details)
+    end
+  end
+
+  def buy_products(conn, invalid_params) do
+    user = conn.assigns[:current_user]
+
+    with {:error, changeset} <- Products.buy_products(user, invalid_params) do
+      {:error, changeset}
+    end
   end
 
   def update(conn, %{"id" => id, "product" => product_params}) do
