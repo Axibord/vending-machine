@@ -180,4 +180,11 @@ defmodule VendingMachine.Accounts.User do
     |> cast(attrs, [:deposit])
     |> validate_required([:deposit])
   end
+
+  def reset_deposit_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:deposit])
+    |> validate_required([:deposit])
+    |> validate_inclusion(:deposit, [0], message: "must be 0")
+  end
 end

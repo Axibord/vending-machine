@@ -421,6 +421,13 @@ defmodule VendingMachine.Accounts do
     |> Repo.update()
   end
 
+  def reset_deposit(%User{} = user) do
+    user
+    |> User.reset_deposit_changeset(%{deposit: 0})
+    |> Ecto.Changeset.update_change(:deposit, fn _ -> 0 end)
+    |> Repo.update()
+  end
+
   @doc """
   Deletes a user.
   
