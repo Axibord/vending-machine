@@ -4,6 +4,12 @@ defmodule VendingMachine.ProductsFixtures do
   entities via the `VendingMachine.Products` context.
   """
 
+  import VendingMachine.AccountsFixtures
+
+  def create_user_of_type_seller do
+    user_fixture(%{role: "seller"})
+  end
+
   @doc """
   Generate a product.
   """
@@ -12,8 +18,9 @@ defmodule VendingMachine.ProductsFixtures do
       attrs
       |> Enum.into(%{
         amount_available: 42,
-        cost: 42,
-        product_name: "some product_name"
+        cost: 5,
+        product_name: "some product_name",
+        seller_id: create_user_of_type_seller().id
       })
       |> VendingMachine.Products.create_product()
 
