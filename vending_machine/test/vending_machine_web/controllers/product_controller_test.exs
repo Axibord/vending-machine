@@ -4,8 +4,6 @@ defmodule VendingMachineWeb.ProductControllerTest do
   import VendingMachine.ProductsFixtures
   import VendingMachine.AccountsFixtures
 
-  alias VendingMachine.Products.Product
-
   setup %{conn: conn} do
     user = user_fixture()
 
@@ -217,10 +215,5 @@ defmodule VendingMachineWeb.ProductControllerTest do
 
       assert conn.status == 204
     end
-  end
-
-  defp create_product(_) do
-    product = product_fixture()
-    %{product: product}
   end
 end

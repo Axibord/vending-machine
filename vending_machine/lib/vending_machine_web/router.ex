@@ -56,12 +56,6 @@ defmodule VendingMachineWeb.Router do
     delete "/users/:id", UserController, :delete
   end
 
-  scope "/", VendingMachineWeb do
-    pipe_through :browser
-
-    get "/", PageController, :home
-  end
-
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:vending_machine, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
@@ -108,7 +102,14 @@ defmodule VendingMachineWeb.Router do
   scope "/", VendingMachineWeb do
     pipe_through [:browser]
 
+    get "/", PageController, :home
     delete "/users/log_out", UserSessionController, :delete
+    live "/products", ProductLive.Index, :index
+    live "/products/new", ProductLive.Index, :new
+    live "/products/:id/edit", ProductLive.Index, :edit
+
+    live "/products/:id", ProductLive.Show, :show
+    live "/products/:id/show/edit", ProductLive.Show, :edit
 
     live_session :current_user,
       on_mount: [{VendingMachineWeb.UserAuth, :mount_current_user}] do
