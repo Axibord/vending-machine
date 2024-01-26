@@ -14,13 +14,15 @@ defmodule VendingMachine.ProductsFixtures do
   Generate a product.
   """
   def product_fixture(attrs \\ %{}) do
+    user = create_user_of_type_seller()
+
     {:ok, product} =
       attrs
       |> Enum.into(%{
         amount_available: 42,
         cost: 5,
         product_name: "some product_name",
-        seller_id: create_user_of_type_seller().id
+        seller_id: user.id
       })
       |> VendingMachine.Products.create_product()
 
